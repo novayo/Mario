@@ -1,4 +1,6 @@
 'use strict';
+var mongojs = require('mongojs');
+var db = mongojs('localhost:2001/mario', ['account', 'progress']);
 const path = require('path');
 const express = require('express');
 const app = express();
@@ -173,15 +175,22 @@ var USERS = {
     "eric": "123",
 }
 var isValidPassword = function (data, callback) {
-    callback(USERS[data.username] === data.password);
+    db.account.find({username:data.username, password:data.password}, (err, res)=>{
+        if (res.length > 0) callback(true);
+        else callback(false);
+    });
 }
 var isUsernameTaken = (data, callback) => {
-    callback(USERS[data.username]); // return true if in list
+    db.account.find({username:data.username}, (err, res)=>{
+        if (res.length > 0) callback(true);
+        else callback(false);
+    });
 }
 
 var addUser = (data, callback) => {
-    USERS[data.username] = data.password;
-    callback();
+    db.account.insert({username:data.username, password:data.password}, (err)=>{
+        callback();
+    });
 }
 
 var io = require('socket.io')(serv, {});
