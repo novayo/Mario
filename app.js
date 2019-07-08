@@ -89,6 +89,12 @@ var Player = function (id) {
     }
 
     Player.list[id] = self;
+    initpack.player.push({
+        id: self.id,
+        x: self.x,
+        y: self.y,
+        number: self.number,
+    });
     return self;
 }
 Player.list = {};
@@ -111,6 +117,9 @@ Player.onConnect = function (socket) {
 }
 Player.onDisconnect = function (socket) {
     delete Player.list[socket.id]; // delete the socket from list
+    removepack.player.push({
+        id: socket.id,
+    });
 }
 Player.update = function () {
     var pack = []; // to store every element from socket
@@ -120,7 +129,7 @@ Player.update = function () {
         pack.push({
             x: player.x,
             y: player.y,
-            number: player.number,
+            id: player.id,
         });
     }
     return pack;
@@ -150,6 +159,11 @@ var Bullet = function (parent, angle) {
     }
 
     Bullet.list[self.id] = self;
+    initpack.bullet.push({
+         id: self.id,
+         x: self.x,
+         y: self.y,
+    });
     return self;
 }
 Bullet.list = {}
@@ -160,20 +174,20 @@ Bullet.update = function () {
         bullet.update();
         if (bullet.toRemove) {
             delete Bullet.list[i];
+            removepack.bullet.push({
+                id: bullet.id,
+            });
         } else {
             pack.push({
                 x: bullet.x,
                 y: bullet.y,
+                id: bullet.id,
             });
         }
     }
     return pack;
 }
 
-var USERS = {
-    //username:password
-    "eric": "123",
-}
 var isValidPassword = function (data, callback) {
     db.account.find({username:data.username, password:data.password}, (err, res)=>{
         if (res.length > 0) callback(true);
@@ -245,14 +259,22 @@ io.sockets.on('connection', function (socket) {
     });
 });
 
+var initpack = {player:[], bullet:[]};
+var removepack = {player:[], bullet:[]};
 setInterval(function () {
     var pack = {
         player: Player.update(),
         bullet: Bullet.update(),
     }
     for (var i in SOCKET_LIST) { // and loop for every socket to send data
-        SOCKET_LIST[i].emit('newPos', pack);
+        SOCKET_LIST[i].emit('init', initpack);
+        SOCKET_LIST[i].emit('update', pack);
+        SOCKET_LIST[i].emit('update', removepack);
     }
+    initpack.player = [];
+    initpack.bullet = [];
+    removepack.player = [];
+    removepack.bullet = [];
 }, 1000 / 25);
 
 module.exports = app;

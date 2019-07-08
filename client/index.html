@@ -60,23 +60,10 @@
         }
     });
 
-    // game
+    // chat
     var chatText = document.getElementById('chat-text');
     var chatInput = document.getElementById('chat-input');
     var chatForm = document.getElementById('chat-form');
-    var ctx = document.getElementById('ctx').getContext('2d'); // draw a canvas
-    ctx.font = '30px Arial'; // set text size on canvas
-
-    socket.on('newPos', function (data) { // if get 'newPos' from server
-        ctx.clearRect(0, 0, 500, 500); // clear canvas
-        for (var i = 0; i < data.player.length; i++) {
-            ctx.fillText(data.player[i].number, data.player[i].x, data.player[i].y); // draw text on canvas throughout every data
-        }
-
-        for (var i = 0; i < data.bullet.length; i++) {
-            ctx.fillRect(data.bullet[i].x, data.bullet[i].y, 10, 10); // draw text on canvas throughout every data
-        }
-    });
     socket.on('addToChat', function (data) {
         chatText.innerHTML += '<div>' + data + '</div>';
     });
@@ -84,6 +71,98 @@
         console.log(data);
     });
 
+    // 
+    var ctx = document.getElementById('ctx').getContext('2d'); // draw a canvas
+    ctx.font = '30px Arial'; // set text size on canvas
+
+    var Player = function(pack){
+        var self = {};
+        self.id = pack.id;
+        self.number = pack.number;
+        self.x = pack.x;
+        self.y = pack.y;
+        Player.list[self.id] = self;
+        return self;
+    }
+    Player.list = {};
+
+    var Bullet = function(pack){
+        var self = {};
+        self.id = pack.id;
+        self.x = pack.x;
+        self.y = pack.y;
+        Bullet.list[self.id] = self;
+        return self;
+    }
+    Bullet.list = {};
+
+    // data = {player: [{pack1},{pack2}], bullet:[{pack1, pack2}]}
+    // pack_for_player = {id:123, x:123, y:123, number:123}
+    // pack_for_bullet = {id:123, x:123, y:123}
+    socket.on('init', function(data){
+        for(var i=0; i<data.player.length; i++){
+            new Player(data.player[i]); // return pack
+        }
+        for(var i=0; i<data.bullet.length; i++){
+            new Bullet(data.bullet[i]); // return pack
+        }
+    });
+ 
+    // data = {player: [{pack1},{pack2}], bullet:[{pack1, pack2}]}
+    // pack_for_player = {id:123, x:123, y:123}
+    // pack_for_bullet = {id:123, x:123, y:123}
+    socket.on('update', function(data){
+        for (var i=0; i<data.player.length; i++){
+            var pack = data.player[i];
+            var p = Player.list[pack.id];
+            // maybe the data contains uncreated stuff here
+            if (p){
+                if (pack.x !== undefined){
+                    p.x = pack.x;
+                }
+                if (pack.y !== undefined){
+                    p.y = pack.y;
+                }
+            }
+        }
+        for (var i=0; i<data.bullet.length; i++){
+            var pack = data.bullet[i];
+            var b = Bullet.list[pack.id];
+            // maybe the data contains uncreated stuff here
+            if (b){
+                if (pack.x !== undefined){
+                    b.x = pack.x;
+                }
+                if (pack.y !== undefined){
+                    b.y = pack.y;
+                }
+            }
+        }
+    });
+
+    socket.on('remove', function(data){
+        for(var i=0; i<data.player.length; i++){
+            delete Player.list[data.player[i]];
+        }
+        for(var i=0; i<data.bullet.length; i++){
+            delete Bullet.list[data.bullet[i]];
+        }
+    });
+
+    setInterval(function(){
+        ctx.clearRect(0, 0, 500, 500); // clear canvas
+        for (var i in Player.list) {
+            ctx.fillText(Player.list[i].number, Player.list[i].x, Player.list[i].y); // draw text on canvas throughout every data
+        }
+
+        for (var i in Bullet.list) {
+            ctx.fillRect(Bullet.list[i].x-5, Bullet.list[i].y-5, 10, 10); // draw text on canvas throughout every data
+        }
+    }, 40);
+
+    
+
+    // game
     // press enter
     chatForm.onsubmit = function (e) {
         e.preventDefault();
