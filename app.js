@@ -61,6 +61,9 @@ var Player = function (id) {
     self.pressingAttack = false;
     self.mouseAngle = 0;
     self.maxSpeed = 10;
+    self.hp = 10;
+    self.hpMax = self.hp;
+    self.score = 0;
 
     var superUpdate = self.update;
     self.update = function () {
@@ -89,12 +92,28 @@ var Player = function (id) {
     }
 
     Player.list[id] = self;
-    initpack.player.push({
-        id: self.id,
-        x: self.x,
-        y: self.y,
-        number: self.number,
-    });
+
+    self.getInitPack = function () {
+        return {
+            id: self.id,
+            x: self.x,
+            y: self.y,
+            number: self.number,
+            hp: self.hp,
+            hpMax: self.hpMax,
+            score: self.score,
+        };
+    }
+    self.getUpdatePack = function () {
+        return {
+            x: self.x,
+            y: self.y,
+            id: self.id,
+            hp: self.hp,
+            score: self.score,
+        };
+    }
+    initpack.player.push(self.getInitPack());
     return self;
 }
 Player.list = {};
@@ -114,23 +133,29 @@ Player.onConnect = function (socket) {
         else if (data.id === 'mouseAngle')
             player.mouseAngle = data.state;
     });
+
+    socket.emit('init', {
+        player: Player.getAllInitPack(),
+        bullet: Bullet.getAllInitPack(),
+    })
 }
+Player.getAllInitPack = function () {
+    var players = [];
+    for (var i in Player.list)
+        players.push(Player.list[i].getInitPack());
+    return players;
+}
+
 Player.onDisconnect = function (socket) {
     delete Player.list[socket.id]; // delete the socket from list
-    removepack.player.push({
-        id: socket.id,
-    });
+    removepack.player.push(socket.id);
 }
 Player.update = function () {
     var pack = []; // to store every element from socket
     for (var i in Player.list) {
         var player = Player.list[i];
         player.update();
-        pack.push({
-            x: player.x,
-            y: player.y,
-            id: player.id,
-        });
+        pack.push(player.getUpdatePack());
     }
     return pack;
 }
@@ -153,17 +178,38 @@ var Bullet = function (parent, angle) {
         for (var i in Player.list) {
             var pt = Player.list[i];
             if (self.getDistance(pt) < 32 && self.parent !== pt.id) {
-                self.toRemove = true;
+                pt.hp--;
+                if (pt.hp <= 0) {
+                    var shooter = Player.list[self.parent];
+                    if (shooter) {
+                        shooter.score++;
+                    }
+                    pt.hp = pt.hpMax;
+                    pt.x = Math.random()*500;
+                    pt.y = Math.random()*500;
+                }
+                self.toRemove = true; // for remove bullet
             }
         }
     }
 
     Bullet.list[self.id] = self;
-    initpack.bullet.push({
-         id: self.id,
-         x: self.x,
-         y: self.y,
-    });
+
+    self.getInitPack = function () {
+        return {
+            id: self.id,
+            x: self.x,
+            y: self.y,
+        };
+    }
+    self.getUpdatePack = function () {
+        return {
+            id: self.id,
+            x: self.x,
+            y: self.y,
+        };
+    }
+    initpack.bullet.push(self.getInitPack());
     return self;
 }
 Bullet.list = {}
@@ -174,35 +220,35 @@ Bullet.update = function () {
         bullet.update();
         if (bullet.toRemove) {
             delete Bullet.list[i];
-            removepack.bullet.push({
-                id: bullet.id,
-            });
+            removepack.bullet.push(bullet.id);
         } else {
-            pack.push({
-                x: bullet.x,
-                y: bullet.y,
-                id: bullet.id,
-            });
+            pack.push(bullet.getInitPack());
         }
     }
     return pack;
 }
+Bullet.getAllInitPack = function () {
+    var bullets = [];
+    for (var i in Bullet.list)
+        bullets.push(bullets.list[i].getInitPack());
+    return bullets;
+}
 
 var isValidPassword = function (data, callback) {
-    db.account.find({username:data.username, password:data.password}, (err, res)=>{
+    db.account.find({ username: data.username, password: data.password }, (err, res) => {
         if (res.length > 0) callback(true);
         else callback(false);
     });
 }
 var isUsernameTaken = (data, callback) => {
-    db.account.find({username:data.username}, (err, res)=>{
+    db.account.find({ username: data.username }, (err, res) => {
         if (res.length > 0) callback(true);
         else callback(false);
     });
 }
 
 var addUser = (data, callback) => {
-    db.account.insert({username:data.username, password:data.password}, (err)=>{
+    db.account.insert({ username: data.username, password: data.password }, (err) => {
         callback();
     });
 }
@@ -218,7 +264,8 @@ io.sockets.on('connection', function (socket) {
             if (res) {
                 Player.onConnect(socket);
                 socket.emit('signInResponse', {
-                    success: true
+                    success: true,
+                    id: socket.id,
                 });
             } else {
                 socket.emit('signInResponse', {
@@ -259,8 +306,8 @@ io.sockets.on('connection', function (socket) {
     });
 });
 
-var initpack = {player:[], bullet:[]};
-var removepack = {player:[], bullet:[]};
+var initpack = { player: [], bullet: [] };
+var removepack = { player: [], bullet: [] };
 setInterval(function () {
     var pack = {
         player: Player.update(),
@@ -269,7 +316,7 @@ setInterval(function () {
     for (var i in SOCKET_LIST) { // and loop for every socket to send data
         SOCKET_LIST[i].emit('init', initpack);
         SOCKET_LIST[i].emit('update', pack);
-        SOCKET_LIST[i].emit('update', removepack);
+        SOCKET_LIST[i].emit('remove', removepack);
     }
     initpack.player = [];
     initpack.bullet = [];
