@@ -74,6 +74,14 @@ var Player = function (id) {
             self.shootBullet(self.mouseAngle);
         }
     }
+    var superUpdatePos = self.updatePos;
+    self.updatePos = function(){
+        superUpdatePos();
+        if (self.x < 0) self.x = 0;
+        if (self.x > 500 - 30) self.x = 500 - 30;
+        if (self.y < 0 + 40) self.y = 0 + 40;
+        if (self.y > 500) self.y = 500;
+    }
 
     self.shootBullet = function (angle) {
         var bullet = Bullet(self.id, angle);
