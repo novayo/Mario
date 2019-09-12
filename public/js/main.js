@@ -19,7 +19,7 @@ Promise.all([
         x: 64,
         y: 64,
     }
-
+    
     const comp = new Compositor();
     const backgroundLayer = createBackgroundLayer(level.backgrounds, backgroundSprites);
     const spriteLayer = createSpriteLayer(marioSprite, pos);
