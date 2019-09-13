@@ -20,7 +20,7 @@ Promise.all([
     // 也就是確保兩個值都拿到之後才會畫出來
     const gravity = 2000;
     mario.pos.set(64, 180);
-    mario.vel.set(200, -600);
+    mario.vel.set(0, -1000);
 
     const SPACE = 32;
     const input = new Keyboard();
