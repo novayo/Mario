@@ -1,13 +1,38 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.background{
+  position: absolute;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.blue-sky{
+  width: 1200px;
+  height: 672px;
+  background-color: #63adff;
+}
+
+.block1{
+  width: 16px;
+  height: 16px;
+  background-position: 0px 0px;
+  background-image: url('/img/tiles.png');
+  transform: scale(3);
+  transform-origin: top left;
+}
+
+.mario{
+  position: absolute;
+  transform: scale(3);
+  transform-origin: top left;
+
+  background-image: url('/img/characters.gif');
+}
+
+.mario-normal-small-idle{
+  width: 12px;
+  height: 16px;
+  background-position: -277px -44px;
+}
+
+.mario-normal-big-idle{
+  width: 16px;
+  height: 24px;
+  background-position: -258px -36px;
 }

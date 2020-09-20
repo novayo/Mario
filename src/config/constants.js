@@ -1,0 +1,1 @@
+export const MARIO_SPEED = 30;

@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-import Mario from './entity/Mario';
+import { MarioMove } from './entity/Mario';
+import World from './entity/World';
 
-function App() {
-  return (
-    <div>
-      <Mario />
-    </div>
-  );
+class App extends Component {
+  componentDidMount() {
+    document.onkeydown = MarioMove;
+  }
+
+  render() {
+    return (
+      <World />
+    );
+  }
 }
 
 export default App;
