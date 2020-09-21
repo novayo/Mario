@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from "react-redux";
-import updatePosition from './actions';
+import { move, jump } from './action';
 
 function MarioMain(props) {
     return (
@@ -16,21 +16,25 @@ function mapStateToProps(state) {
 }
 
 export let Mario = connect(mapStateToProps)(MarioMain);
-export const MarioMove = (e) => {
+export const MarioKeydown = (e) => {
     switch (e.keyCode) {
         case 37:
-            updatePosition('LEFT');
+            move('LEFT');
             break;
         case 38:
-            updatePosition('UP');
+            move('UP');
             break;
         case 39:
-            updatePosition('RIGHT');
+            move('RIGHT');
             break;
         case 40:
-            updatePosition('DOWN');
+            move('DOWN');
+            break;
+        case 32:
+            jump();
             break;
         default:
-            console.log(e.keyCode)
+            // console.log(e.keyCode);
+            break;
     }
 }

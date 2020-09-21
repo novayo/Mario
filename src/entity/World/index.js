@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import { Mario } from '../Mario';
 import Background from '../World/background';
 
-export default function World() {
-    return (
-        <div>
-            <Background />
-            <Mario />
-        </div>
-    )
+class World extends Component {
+
+    render() {
+        return (
+            <div>
+                <Background />
+                <Mario />
+            </div>
+        )
+    }
 }
+
+export default World;

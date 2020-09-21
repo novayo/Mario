@@ -1,8 +1,13 @@
 const initialState = {
     position: {
+        top: 528,
+        left: 0,
+    },
+    velocity: {
         top: 0,
         left: 0,
-    }
+    },
+    isJumping: false,
 }
 
 export default function playerReducer(state = initialState, action) {

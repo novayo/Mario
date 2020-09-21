@@ -11,14 +11,15 @@
 .block1{
   width: 16px;
   height: 16px;
-  background-position: 0px 0px;
-  background-image: url('/img/tiles.png');
   transform: scale(3);
   transform-origin: top left;
+
+  background-position: 0px 0px;
+  background-image: url('/img/tiles.png');
 }
 
 .mario{
-  position: absolute;
+  position: relative;
   transform: scale(3);
   transform-origin: top left;
 

@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 
-import { MarioMove } from './entity/Mario';
+import { MarioKeydown } from './entity/Mario';
 import World from './entity/World';
+import WorldTime from './entity/World/time';
 
 class App extends Component {
   componentDidMount() {
-    document.onkeydown = MarioMove;
+    document.onkeydown = MarioKeydown;
+    setInterval(WorldTime, 16); // 60 fps
   }
 
   render() {
