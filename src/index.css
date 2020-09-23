@@ -18,17 +18,18 @@
   background-image: url('/img/tiles.png');
 }
 
-.mario{
+.mario{ 
   position: relative;
   transform: scale(3);
   transform-origin: top left;
+  /* background-color: black; */
 
   background-image: url('/img/characters.gif');
 }
 
 .mario-normal-small-idle{
-  width: 12px;
-  height: 16px;
+  /* width: 12px;
+  height: 16px; */
   background-position: -277px -44px;
 }
 

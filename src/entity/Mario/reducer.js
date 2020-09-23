@@ -1,12 +1,18 @@
 const initialState = {
+    size: {
+        width: 12,
+        height: 16,
+    },
     position: {
-        top: 528,
-        left: 0,
+        top: 0,
+        left: 48,
     },
     velocity: {
         top: 0,
         left: 0,
+        right: 0,
     },
+    isInAir: true,
     isJumping: false,
 }
 

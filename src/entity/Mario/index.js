@@ -1,12 +1,19 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { move, jump } from './action';
 
-function MarioMain(props) {
-    return (
-        <div className="mario mario-normal-small-idle"
-            style={{ top: props.position.top, left: props.position.left }}></div>
-    );
+class MarioMain extends Component {
+    render() {
+        return (
+            <div className="mario mario-normal-small-idle"
+                style={{
+                    top: this.props.position.top,
+                    left: this.props.position.left,
+                    width: `${this.props.size.width}px`,
+                    height: `${this.props.size.height}px`,
+                }}>
+            </div>
+        );
+    }
 }
 
 function mapStateToProps(state) {
@@ -16,25 +23,3 @@ function mapStateToProps(state) {
 }
 
 export let Mario = connect(mapStateToProps)(MarioMain);
-export const MarioKeydown = (e) => {
-    switch (e.keyCode) {
-        case 37:
-            move('LEFT');
-            break;
-        case 38:
-            move('UP');
-            break;
-        case 39:
-            move('RIGHT');
-            break;
-        case 40:
-            move('DOWN');
-            break;
-        case 32:
-            jump();
-            break;
-        default:
-            // console.log(e.keyCode);
-            break;
-    }
-}
