@@ -8,7 +8,6 @@ export function DownCollision() {
 
     let isCollide = Store.getState().worldReducer.blocks.filter((blocksPosition) => {
         return Store.getState().marioReducer.position.top + newVelTop < blocksPosition[0] + SPRITE_SIZE &&
-            // Store.getState().marioReducer.position.top + marioHeight < blocksPosition[0] + SPRITE_SIZE / 3 &&
             Store.getState().marioReducer.position.top + marioHeight + newVelTop >= blocksPosition[0] &&
             Store.getState().marioReducer.position.left + marioWidth > blocksPosition[1] &&
             Store.getState().marioReducer.position.left < blocksPosition[1] + SPRITE_SIZE
@@ -24,7 +23,8 @@ export function UpCollision() {
     let marioHeight = Store.getState().marioReducer.size.height * SCALE;
 
     let isCollide = Store.getState().worldReducer.blocks.filter((blocksPosition) => {
-        return Store.getState().marioReducer.position.top + newVelTop <= blocksPosition[0] + SPRITE_SIZE &&
+        return newVelTop < 0 &&
+            Store.getState().marioReducer.position.top + newVelTop <= blocksPosition[0] + SPRITE_SIZE &&
             Store.getState().marioReducer.position.top + marioHeight + newVelTop > blocksPosition[0] &&
             Store.getState().marioReducer.position.left + marioWidth > blocksPosition[1] &&
             Store.getState().marioReducer.position.left < blocksPosition[1] + SPRITE_SIZE

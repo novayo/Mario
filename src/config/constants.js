@@ -6,8 +6,8 @@ export const RIGHT = 39;
 export const UP = 38;
 export const JUMP = 32;
 
-export const WINDOW_WIDTH = 25 * SPRITE_SIZE * SCALE;
-export const WINDOW_HEIGHT = 13 * SPRITE_SIZE * SCALE;
+export const WINDOW_WIDTH = 25 * SPRITE_SIZE;
+export const WINDOW_HEIGHT = 13 * SPRITE_SIZE;
 
 export const MARIO_SPEED = 8;
 export const MARIO_JUMP_HEIGHT = 350;

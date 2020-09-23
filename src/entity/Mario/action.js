@@ -63,6 +63,10 @@ export function updateMarioVels() {
         isInAir = true;
     }
 
+    if (isInAir) {
+        newVelTop += GRAVITY;
+    }
+
     // 更新狀態
     const action = {
         type: 'MARIO_MOVE',
@@ -104,19 +108,18 @@ export function updateMarioCollision() {
     let upCollision = UpCollision();
     let downCollision = DownCollision();
 
-    if (newVelTop < 0 && upCollision.length > 0) {
-        console.log('撞頭')
+    if (upCollision.length > 0) {
+        // console.log('撞頭')
         newVelTop = 0;
         newTop = upCollision[0][0] + SPRITE_SIZE
     }
     else if (downCollision.length === 0) {
-        console.log('在空中')
+        // console.log('在空中')
         isInAir = true;
-        newVelTop += GRAVITY;
         newTop += newVelTop;
     }
     else {
-        console.log('在地板')
+        // console.log('在地板')
         newVelTop = 0;
         newTop = downCollision[0][0] - marioHeight
         isInAir = false;
@@ -160,14 +163,14 @@ export function updateMarioCollision() {
     let leftCollision = LeftCollision();
 
     if (keyMap.has(RIGHT) && rightCollision.length > 0) {
-        console.log('撞右邊')
+        // console.log('撞右邊')
         newVelRight = 0;
         newLeft = rightCollision[0][1] - marioWidth
     }
 
 
     if (keyMap.has(LEFT) && leftCollision.length > 0) {
-        console.log('撞左邊')
+        // console.log('撞左邊')
         newVelLeft = 0;
         newLeft = leftCollision[0][1] + SPRITE_SIZE
     }
@@ -179,12 +182,16 @@ export function updateMarioCollision() {
             position: {
                 ...Store.getState().marioReducer.position,
                 left: newLeft,
+                // top: newTop,
             },
             velocity: {
                 ...Store.getState().marioReducer.velocity,
                 right: newVelRight,
                 left: newVelLeft,
+                // top: newVelTop,
             },
+            // isInAir: isInAir,
+            // isJumping: isJumping,
         }
     }
     Store.dispatch(action);

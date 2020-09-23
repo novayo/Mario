@@ -15,7 +15,6 @@ export const MarioKeydown = (e) => {
         case UP:
         case JUMP:
             keyMap.add(JUMP);
-            // jump();
             break;
         default:
             return;

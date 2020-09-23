@@ -25,6 +25,8 @@ class Background extends Component {
         drawBlock1(19, 20, 9); // test block
 
         drawBlock1(0, 8, 10); // test block
+
+        drawBlock1(20, 25, 10); // test block
     }
 
     render() {
