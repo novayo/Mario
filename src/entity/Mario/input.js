@@ -1,5 +1,9 @@
 import { LEFT, RIGHT, UP, JUMP } from '../../config/constants';
 
+
+const one_for_testing = 49;
+
+
 export let keyMap = new Set();
 
 export const MarioKeydown = (e) => {
@@ -16,6 +20,8 @@ export const MarioKeydown = (e) => {
         case JUMP:
             keyMap.add(JUMP);
             break;
+        case one_for_testing:
+            break
         default:
             return;
     }

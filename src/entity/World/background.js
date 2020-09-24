@@ -1,37 +1,21 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { drawBlock1 } from './action';
+import { drawBlocks } from './action';
+import { level_1_1 } from './levels';
 
 class Background extends Component {
-    state = {
-        isLoading: true,
-    }
 
     componentDidMount() {
-        drawBlock1(0, 25, 12); // floor 1
-        drawBlock1(0, 25, 13); // floor 2
-        drawBlock1(0, 4, 7); // test block
-        drawBlock1(8, 11, 7); // test block
-        drawBlock1(8, 11, 8); // test block
-        drawBlock1(8, 11, 9); // test block
-        drawBlock1(14, 15, 9); // test block
-
-        drawBlock1(17, 18, 7); // test block
-        drawBlock1(17, 18, 8); // test block
-        drawBlock1(17, 18, 9); // test block
-
-        drawBlock1(19, 20, 7); // test block
-        drawBlock1(19, 20, 8); // test block
-        drawBlock1(19, 20, 9); // test block
-
-        drawBlock1(0, 8, 10); // test block
-
-        drawBlock1(20, 25, 10); // test block
+        let level = level_1_1();
+        level.map((data) => {
+            return (
+                drawBlocks(data)
+            )
+        })
     }
 
     render() {
-
-        if (this.props.blocks !== null) {
+        if (this.props.loading === false) {
             return (
                 <div className="background blue-sky">
                     {
